@@ -10,7 +10,7 @@ import subprocess, select
 log = logging.getLogger('sshalert')
 log.setLevel(logging.INFO)
 
-with open('.env') as f:
+with open('/home/jt/bitbucket/sshalert/.env') as f:
     for line in f:
         if line.startswith('#'):
             continue
