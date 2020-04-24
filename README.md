@@ -16,10 +16,7 @@ Use rsync to copy this project directory to your target server. Adjust file path
 Pass your secrets in as env vars, or use the secrets.env file in this repo (and referenced in the sshalert.service systemd unit file):
 
 ```
-NEXMO_KEY=yourkey
-NEXMO_SECRET=yoursecret
-TARGET_PHONE_NUMBER=yourphonenumber
-TARGET_PHONE_NUMBER=yournexmosourcenumber
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/XXX/YYY
 ```
 
 

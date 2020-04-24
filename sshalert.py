@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 
+import json
 import logging
+import requests
 import os, time
 import subprocess, select
-import nexmo
 
 # Initialization
 log = logging.getLogger('sshalert')
 log.setLevel(logging.INFO)
 
+with open('secrets.env') as f:
+    for line in f:
+        if line.startswith('#'):
+            continue
+        key, value = line.replace('export ', '', 1).strip().split('=', 1)
+        os.environ[key] = value
+
 try:
-    source_phone_number = os.getenv("SOURCE_PHONE_NUMBER")
-    target_phone_number = os.getenv("TARGET_PHONE_NUMBER")
-    nexmo_key = os.getenv("NEXMO_KEY")
-    nexmo_secret = os.getenv("NEXMO_SECRET")
+    slack_webhook = os.getenv("SLACK_WEBHOOK_URL")
 except:
     logging.critical("ERROR: Have you exported all required environment variables? (TARGET_PHONE_NUMBER, NEXMO_KEY, NEXMO_SECRET)")
     exit(1)
-
-# Initialize the nexmo client
-nexmo_client = nexmo.Client(key=nexmo_key, secret=nexmo_secret)
 
 
 def poll_logfile(filename):
@@ -42,32 +44,33 @@ def process_log_entry(logline):
     """
     # If it's a local sudo exec
     if "sudo" and "COMMAND" in logline:
-        send_sms(logline)
+        send_message(logline)
     
     # If it's an SSH login
     elif "ssh" and "Accepted" in logline:
-        send_sms(logline)
+        send_message(logline)
     return
 
 
-def send_sms(msg):
+def send_message(msg):
     """
-    Sends a text message to the target phone number, via nexmo.
+    Sends a text message to the target slack channel, via slack webhook.
     Returns 0 if everything worked; otherwise 1
     """
-    # Send a message
-    response = nexmo_client.send_message({
-        'from': source_phone_number,
-        'to': target_phone_number,
-        'text': msg,
-    })
+    # Set the webhook_url to the one from your secrets.env file
+    webhook_url = slack_webhook
+    slack_data = {'text': msg}
 
-    # Error handling
-    if response['messages'][0]['status'] != '0':
-        logging.error("ERROR: failed to send message: {0}".format(response['messages'][0]['error-text']))
+    response = requests.post(
+        webhook_url, data=json.dumps(slack_data),
+        headers={'Content-Type': 'application/json'}
+    )
+
+    # Error Handling
+    if response.status_code != 200:
+        logging.error("ERROR: failed to send message: {} CODE: {}".format(response.text, response.status_code))
     else:
-        logging.info("Successfully sent text message.")
-
+        logging.info("Successfully sent slack message")
 
 # If this program was called directly (as opposed to imported)
 if __name__ == "__main__":

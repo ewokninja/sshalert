@@ -1,5 +1,5 @@
 [Unit]
-Description=Tutorialinux sshalert service - alerts when someone logs in or sudos
+Description=SSH alert service - alerts when someone logs in or sudos
 
 [Install]
 WantedBy=multi-user.target
