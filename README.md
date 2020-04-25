@@ -1,6 +1,6 @@
-# The tutorialinux SSHAlert script
+# SSHAlert script
 
-A simple script that sends a text message when someone logs in or becomes root.
+A simple script that sends a slack message when someone logs in or becomes root. This is forked from Dave at Tutorial Linux, he's great, go follow him and check out the original.
 
 ## To run
 ```
@@ -8,6 +8,7 @@ virtualenv -p python3 venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+NOTE: I don't use a virtual environment for this particular use but I'm leaving these instructions here because generally I think it's a good idea.
 
 ## To install
 
