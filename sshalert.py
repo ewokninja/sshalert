@@ -20,7 +20,7 @@ with open('/home/jt/bitbucket/sshalert/.env') as f:
 try:
     slack_webhook = os.getenv("SLACK_WEBHOOK_URL")
 except:
-    logging.critical("ERROR: Have you exported all required environment variables? (TARGET_PHONE_NUMBER, NEXMO_KEY, NEXMO_SECRET)")
+    logging.critical("ERROR: No value for SLACK_WEBHOOK_URL - do you have the .env file?")
     exit(1)
 
 
